@@ -735,13 +735,13 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         }
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        if (isInPlaybackState() && mMediaController != null) {
-            toggleMediaControlsVisiblity();
-        }
-        return false;
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent ev) {
+//        if (isInPlaybackState() && mMediaController != null) {
+//            toggleMediaControlsVisiblity();
+//        }
+//        return false;
+//    }
 
     @Override
     public boolean onTrackballEvent(MotionEvent ev) {

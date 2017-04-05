@@ -3,4 +3,35 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="zx_b3aeae">#b3aeae</color>
+    <color name="zx_color2">#9B9A9A</color>
+    <color name="zx_color3">#FFF</color>
+    <color name="zx_3df1ed">#3df1ed</color>
+    <color name="zx_dcdcdc">#DCDCDC</color>
+    <color name="zx_0E0A0B">#0E0A0B</color>
+
+    <color name="zx_87CEFA">#87CEFA</color>
+    <color name="zx_ADFF2F">#ADFF2F</color>
+
+    <color name="listGridItemText">#00e4f9</color>
+
+    <color name="titleTextColor">#bbc4edf2</color>
+
+    <color name="diskViewTextColor">#faf8f8</color>
+    <color name="diskViewDiskNameColor">#FF010A12</color>
+
+    <color name="listMenuFocusColor">#0E0A0B</color>
+
+    <color name="clear_dividing_line">#33b5e5</color>
+
+    <color name="white">#fff</color>
+
+    <color name="background_trans">#00faf8f8</color>
+    <color name="background_trans_focus">#70FFFFFF</color>
+    <color name="background_trans_highlight">#B0FFFFFF</color>
+
+    <color name="un_select_backgroud">#4682B4</color>
+    <color name="select_backgroud">#00E5EE</color>
+    <color name="settings_backgroud">#000033</color>
 </resources>

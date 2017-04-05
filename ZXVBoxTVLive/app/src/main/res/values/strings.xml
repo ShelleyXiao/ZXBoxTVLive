@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">ZXVBoxTVLive</string>
+
+    <string name="load_progress_promate">正在解析频道，请稍后..</string>
+    <string name="show_load_progress_promate">节目加载中...</string>
+    <string name="show_load_error">节目暂时不能播放</string>
+    <string name="channel_title">频道列表</string>
+    <string name="show_playing_tilte">正在播放:</string>
+    <string name="show_will_play_title">即将播放:</string>
+    <string name="get_edg_info_title">正在获取节目信息</string>
+
 </resources>
