@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/px280"
-    android:layout_height="@dimen/px80"
+    android:layout_height="@dimen/px75"
     android:layout_gravity="center"
     android:layout_margin="15dp"
     android:focusable="true"
@@ -19,7 +19,8 @@
         android:gravity="center"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:maxLines="1"/>
 
 
 </RelativeLayout>

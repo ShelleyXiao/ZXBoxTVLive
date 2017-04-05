@@ -19,4 +19,7 @@ public class Constants {
     public static String BASE_EPG_YANSHI = "?class=yangshi";
     public static String BASE_EPG_WEISHI = "TV-1?class=weishii";
 
+
+    public static int MAX_SOURCE_NUM = 2;
+
 }

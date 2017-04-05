@@ -30,6 +30,7 @@ import zx.com.zxvboxtvlive.R;
 import zx.com.zxvboxtvlive.ijkplayer.media.IjkVideoView;
 import zx.com.zxvboxtvlive.mode.TvSource;
 import zx.com.zxvboxtvlive.presenter.AllChannelPresenter;
+import zx.com.zxvboxtvlive.presenter.EDGPresenter;
 import zx.com.zxvboxtvlive.presenter.VideoViewPresenter;
 import zx.com.zxvboxtvlive.utils.Logger;
 import zx.com.zxvboxtvlive.view.IMainView;
@@ -53,14 +54,13 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
     private TextView mShowWillPlayName;
 
     private ProgressBar mShowProgress;
-
-    private AllChannelPresenter mAllChannelPresenter;
-
     private MetroViewBorderImpl mMetroViewBorder;
 
-    private ChannelItemAdapter mChannelItemAdapter;
+    private AllChannelPresenter mAllChannelPresenter;
     private VideoViewPresenter mVideoViewPresenter;
+    private EDGPresenter mEDGPresenter;
 
+    private ChannelItemAdapter mChannelItemAdapter;
     private List<TvSource> mTvSources = new ArrayList<>();
 
     private boolean showChannelView = true;
@@ -102,7 +102,8 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
 
         registerReceiver();
 
-        mAllChannelPresenter.updateChannelData();
+//        mAllChannelPresenter.updateChannelData();
+        mAllChannelPresenter.updateChannelDataOther();
 
         new Thread( new Runnable() {
 
@@ -169,6 +170,8 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
 
         mVideoViewPresenter = new VideoViewPresenter(this, this, (IjkVideoView)findViewById(R.id.videoview));
 
+        mEDGPresenter = new EDGPresenter(this, this);
+
         findViewById(R.id.show_playing_info_view).setOnTouchListener(this);
         findViewById(R.id.show_playing_info_view).setOnTouchListener(this);
         findViewById(R.id.videoview).setOnTouchListener(this);
@@ -190,12 +193,14 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
 
     @Override
     public void showError(boolean show) {
+        mVideoView.setVisibility(View.GONE);
         View view = findViewById(R.id.load_error);
         if (show) {
             view.setVisibility(View.VISIBLE);
         } else {
             view.setVisibility(View.GONE);
         }
+        Logger.getLogger().i("show error");
     }
 
     @Override
@@ -218,7 +223,16 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
         mChannelItemAdapter.setData(data);
         mChannelItemAdapter.notifyDataSetChanged();
 
-        mVideoViewPresenter.playVideo(data.get(0).getTvDataSource());
+        mVideoViewPresenter.playVideo(data.get(15).getTvDataSource());
+        mVideoView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void checkNextSource() {
+        showToastLong(getString(R.string.get_channel_source_other));
+        showError(false);
+        showLoadingView(R.string.load_progress_promate);
+        mAllChannelPresenter.updateChannelDataOther();
     }
 
     @Override

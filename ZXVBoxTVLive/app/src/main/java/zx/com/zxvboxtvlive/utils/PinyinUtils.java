@@ -1,5 +1,6 @@
 package zx.com.zxvboxtvlive.utils;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
@@ -9,8 +10,10 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 
 import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class PinyinComparator implements Comparator<Object> {
+public class PinyinUtils implements Comparator<Object> {
 	/**
 	 * 比较两个字符串
 	 */
@@ -62,5 +65,28 @@ public class PinyinComparator implements Comparator<Object> {
 			Log.e("Exception", e.toString());
 		}
 		return output;
+	}
+
+
+	public static String processTVPinyinLog(String tvName) {
+		if(TextUtils.isEmpty(tvName)) {
+			return null;
+		}
+
+		if(tvName.contains("CCTV")) {
+			String regEx="[^0-9]";
+			Pattern p = Pattern.compile(regEx);
+			Matcher m = p.matcher(tvName);
+
+			return "cctv-" + m.replaceAll("").trim();
+		}
+
+		String pinyin = PinyinUtils.getPingYin(tvName).toUpperCase();
+		if(pinyin.contains("WS")) {
+
+			return pinyin.substring(0, 2);
+		}
+
+		return null;
 	}
 }

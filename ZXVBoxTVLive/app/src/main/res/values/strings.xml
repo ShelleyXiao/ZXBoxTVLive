@@ -9,4 +9,8 @@
     <string name="show_will_play_title">即将播放:</string>
     <string name="get_edg_info_title">正在获取节目信息</string>
 
+    <string name="get_channel_faild">获取频道信息失败</string>
+
+    <string name="get_channel_source_other">正在为您解析另一个节目源，请稍后..</string>
+
 </resources>

@@ -65,6 +65,7 @@ public class ChannelItemAdapter extends RecyclerView.Adapter<ChannelItemAdapter.
     }
 
     public void setData(List<TvSource> data) {
+        mDataList.clear();
         mDataList.addAll(data);
     }
 

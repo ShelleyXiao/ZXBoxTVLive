@@ -24,6 +24,7 @@ public interface IMainView {
 
     void updateChannleAdapter(List<TvSource> data);
 
+    void checkNextSource();
 
 
 }

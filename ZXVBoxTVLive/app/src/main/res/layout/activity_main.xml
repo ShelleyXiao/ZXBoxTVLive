@@ -15,7 +15,8 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:focusable="false"
-        android:focusableInTouchMode="false">
+        android:focusableInTouchMode="false"
+        android:visibility="gone">
     </zx.com.zxvboxtvlive.ijkplayer.media.IjkVideoView>
 
     <LinearLayout
@@ -55,10 +56,23 @@
         android:focusable="false">
 
         <ImageView
+            android:id="@+id/error_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/pagefailed_bg"
+            />
+
+
+        <TextView
+            android:id="@+id/error_promate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/error_img"
+            android:layout_marginTop="@dimen/px5"
+            android:text="@string/get_channel_faild"
+            android:textColor="#fff"
+            android:textSize="18sp"
             />
 
 

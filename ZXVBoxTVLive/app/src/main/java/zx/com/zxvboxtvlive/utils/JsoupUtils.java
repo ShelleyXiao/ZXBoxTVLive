@@ -1,7 +1,5 @@
 package zx.com.zxvboxtvlive.utils;
 
-import android.text.TextUtils;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,14 +9,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import zx.com.zxvboxtvlive.Constants;
 import zx.com.zxvboxtvlive.mode.ShowPlayTimes;
 import zx.com.zxvboxtvlive.mode.TvSource;
 
 import static zx.com.zxvboxtvlive.Constants.TAG_HREF;
+import static zx.com.zxvboxtvlive.utils.PinyinUtils.processTVPinyinLog;
 
 /**
  * User: ShaudXiao
@@ -63,7 +60,7 @@ public class JsoupUtils {
 //        Element element = (Element) iterator.next();
         Element elementP = element.select("p").first();
         source.setTvName(elementP.text());
-        source.setPinyingLog(processTVPinyinLog(elementP.text()));
+        source.setPinyingLog(PinyinUtils.processTVPinyinLog(elementP.text()));
         Elements elementa = element.select("a");
         for(Element e :  elementa) {
             if(TAG_HREF.equals(e.text().trim())) {
@@ -134,26 +131,5 @@ public class JsoupUtils {
         return showPlayTimesList;
     }
 
-    private static String processTVPinyinLog(String tvName) {
-        if(TextUtils.isEmpty(tvName)) {
-            return null;
-        }
-
-        if(tvName.contains("CCTV")) {
-            String regEx="[^0-9]";
-            Pattern p = Pattern.compile(regEx);
-            Matcher m = p.matcher(tvName);
-
-            return "cctv-" + m.replaceAll("").trim();
-        }
-
-        String pinyin = PinyinComparator.getPingYin(tvName).toUpperCase();
-        if(pinyin.contains("WS")) {
-
-            return pinyin.substring(0, 2);
-        }
-
-        return null;
-    }
 
 }
