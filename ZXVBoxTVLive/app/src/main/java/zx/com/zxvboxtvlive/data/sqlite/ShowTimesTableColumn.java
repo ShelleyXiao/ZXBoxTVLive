@@ -16,6 +16,8 @@ public class ShowTimesTableColumn {
 
     public static final String CHANNEL_ID = "_id";
 
+    public static final String CHANNEL_INDEX = "indexId";
+
     public static final String CHANNEL_NAME = "channel_name";
 
     public static final String SHOWS_PIC_URL = "show_pic_url";
@@ -27,6 +29,8 @@ public class ShowTimesTableColumn {
     public static final String SHOWS_END_TIME = "show_end_time";
 
     public static final String SHOWS_CONTENT = "show_content";
+
+    public static final String SHOWS_PLAYING = "is_playing";
 
 
 }

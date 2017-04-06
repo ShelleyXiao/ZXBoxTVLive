@@ -12,14 +12,43 @@ package zx.com.zxvboxtvlive.mode;
 
 public class ShowPlayTimes {
 
+    private int index;
     private String chanelName;
     private String pic;
     private String showName;
     private String showStartTime;
     private String showEndTime;
     private String showContent;
+    private boolean isPlaying;
 
     public ShowPlayTimes() {
+    }
+
+    public ShowPlayTimes(ShowPlayTimes time) {
+        index = time.getIndex();
+        chanelName = time.getChanelName();
+        pic = time.getPic();
+        showName = time.getShowName();
+        showStartTime = time.getShowStartTime();
+        showEndTime = time.getShowEndTime();
+        showContent = time.getShowContent();
+        isPlaying = time.isPlaying();
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public boolean isPlaying() {
+        return isPlaying;
+    }
+
+    public void setPlaying(boolean playing) {
+        isPlaying = playing;
     }
 
     public String getChanelName() {
@@ -73,11 +102,14 @@ public class ShowPlayTimes {
     @Override
     public String toString() {
         return "ShowPlayTimes{" +
-                "pic='" + pic + '\'' +
+                "index=" + index +
+                ", chanelName='" + chanelName + '\'' +
+                ", pic='" + pic + '\'' +
                 ", showName='" + showName + '\'' +
                 ", showStartTime='" + showStartTime + '\'' +
                 ", showEndTime='" + showEndTime + '\'' +
                 ", showContent='" + showContent + '\'' +
+                ", isPlaying=" + isPlaying +
                 '}';
     }
 }

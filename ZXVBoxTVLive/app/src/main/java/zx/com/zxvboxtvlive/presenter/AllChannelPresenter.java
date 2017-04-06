@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.res.AssetManager;
 import android.text.TextUtils;
 
+import com.fernandocejas.frodo.annotation.RxLogSubscriber;
+
 import org.jsoup.nodes.Document;
 
 import java.io.BufferedReader;
@@ -106,6 +108,7 @@ public class AllChannelPresenter extends Presenter {
 
     }
 
+//    @RxLogObservable
     public void updateChannelDataOther() {
         Observable.create(new Observable.OnSubscribe<List<TvSource>>() {
             @Override
@@ -131,7 +134,7 @@ public class AllChannelPresenter extends Presenter {
                                 source.setTvDataSource(channel[1]);
                                 source.setPinyingLog(PinyinUtils.processTVPinyinLog(channel[0]));
                                 sources.add(source);
-                                Logger.getLogger().i(source.toString());
+//                                Logger.getLogger().i(source.toString());
                             }
                         }
                         TvSourceSet.tvSource1.addAll(sources);
@@ -163,6 +166,7 @@ public class AllChannelPresenter extends Presenter {
             public void onCompleted() {
                 Logger.getLogger().d(" onCompleted");
                 mAllChannelView.hideLoadingView();
+                mAllChannelView.updateShowInfo();
             }
 
             @Override
@@ -180,6 +184,25 @@ public class AllChannelPresenter extends Presenter {
                 mAllChannelView.updateChannleAdapter(tvSources);
             }
         });
+    }
+
+
+    @RxLogSubscriber
+    class TvSouceSubcriber extends Subscriber<List<TvSource>> {
+        @Override
+        public void onCompleted() {
+
+        }
+
+        @Override
+        public void onError(Throwable e) {
+
+        }
+
+        @Override
+        public void onNext(List<TvSource> tvSources) {
+
+        }
     }
 
 }

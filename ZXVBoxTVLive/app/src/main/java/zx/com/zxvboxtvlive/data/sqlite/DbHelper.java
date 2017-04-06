@@ -24,19 +24,22 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_SHOWPLAYTIMES_TABLE =
             "CREATE TABLE " + ShowTimesTableColumn.SHOWTIMES_TABLE_NAME + " (" +
                     ShowTimesTableColumn.CHANNEL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    ShowTimesTableColumn.CHANNEL_INDEX + " INTEGER," +
                     ShowTimesTableColumn.CHANNEL_NAME + " VARCHAR(30)," +
                     ShowTimesTableColumn.SHOWS_PIC_URL + " VARCHAR(300)," +
                     ShowTimesTableColumn.SHOWS_NAME + " VARCHAR(60)," +
                     ShowTimesTableColumn.SHOWS_START_TIME + " VARCHAR(12)," +
                     ShowTimesTableColumn.SHOWS_END_TIME + " VARCHAR(12)," +
-                    ShowTimesTableColumn.SHOWS_CONTENT + " TEXT" +
+                    ShowTimesTableColumn.SHOWS_CONTENT + " TEXT," +
+                    ShowTimesTableColumn.SHOWS_PLAYING + " INTEGER" +
                     ") ";
 
     private static final String SQL_CREATE_SHOWSPLAYTABLE_UPDATE_TABLE =
             "CREATE TABLE " + ShowsPlayTableUpdateColumn.SHOWS_PLAY_TABLE_UPDATE_TABLE_NAME + " (" +
                     ShowsPlayTableUpdateColumn.SHOWS_PLAY_TIME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     ShowsPlayTableUpdateColumn.SHOWS_CHANNEL_NAME + " VARCHAR(30), " +
-                    ShowsPlayTableUpdateColumn.SHOWS_UPDATE_TIME + " DATETIME DEFAULT CURRENT_TIMESTAMP" +
+//                    ShowsPlayTableUpdateColumn.SHOWS_UPDATE_TIME + " DATETIME DEFAULT CURRENT_TIMESTAMP" +
+                    ShowsPlayTableUpdateColumn.SHOWS_UPDATE_TIME + " VARCHAR(60)" +
                     ") ";
 
     public DbHelper(Context context) {

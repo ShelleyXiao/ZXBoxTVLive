@@ -54,6 +54,7 @@ public class VideoViewPresenter extends Presenter {
                 mIMainView.hideLoadingView();
 
                 Logger.getLogger().i("video prepared, video start");
+
             }
         });
 

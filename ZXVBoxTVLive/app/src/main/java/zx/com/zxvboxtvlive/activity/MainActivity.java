@@ -19,15 +19,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fernandocejas.frodo.annotation.RxLogSubscriber;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Subscriber;
 import zx.com.zxvboxtvlive.Adapter.ChannelItemAdapter;
 import zx.com.zxvboxtvlive.R;
 import zx.com.zxvboxtvlive.ijkplayer.media.IjkVideoView;
+import zx.com.zxvboxtvlive.mode.ShowPlayTimes;
 import zx.com.zxvboxtvlive.mode.TvSource;
 import zx.com.zxvboxtvlive.presenter.AllChannelPresenter;
 import zx.com.zxvboxtvlive.presenter.EDGPresenter;
@@ -37,7 +35,7 @@ import zx.com.zxvboxtvlive.view.IMainView;
 import zx.com.zxvboxtvlive.view.widget.MetroViewBorderImpl;
 
 
-public class MainActivity extends FullActivity implements IMainView , View.OnTouchListener{
+public class MainActivity extends FullActivity implements IMainView, View.OnTouchListener {
 
     private MyConnectionChanngeReceiver myReceiver;
     private boolean isNetWork = true;
@@ -62,6 +60,7 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
 
     private ChannelItemAdapter mChannelItemAdapter;
     private List<TvSource> mTvSources = new ArrayList<>();
+    private TvSource mCurrentPlaySource;
 
     private boolean showChannelView = true;
     private boolean showProgrameInfoView = true;
@@ -72,7 +71,7 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
     private Runnable mHideChannelViewRunnable = new Runnable() {
         @Override
         public void run() {
-            if(showChannelView) {
+            if (showChannelView) {
 
             } else {
 
@@ -83,7 +82,7 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
     private Runnable mHideShowInfoViewRunnable = new Runnable() {
         @Override
         public void run() {
-            if(showProgrameInfoView) {
+            if (showProgrameInfoView) {
                 showProgrameInfoView = false;
                 mShowPlayInfoView.setVisibility(View.GONE);
             } else {
@@ -105,7 +104,8 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
 //        mAllChannelPresenter.updateChannelData();
         mAllChannelPresenter.updateChannelDataOther();
 
-        new Thread( new Runnable() {
+
+        new Thread(new Runnable() {
 
             @Override
             public void run() {
@@ -117,12 +117,12 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
                     }
                     View rootview = MainActivity.this.getWindow().getDecorView();
                     View aaa = rootview.findFocus();
-                    if(aaa != null)
-                    Logger.getLogger().d("" + aaa.toString());
+//                    if(aaa != null)
+//                    Logger.getLogger().d("" + aaa.toString());
                 }
 
             }
-        }  ).start();
+        }).start();
 
     }
 
@@ -155,7 +155,7 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
 
         mShowPlayInfoView = findViewById(R.id.show_playing_info_view);
         mVideoView = (IjkVideoView) findViewById(R.id.videoview);
-        mChannelView =  findViewById(R.id.channel_name_view);
+        mChannelView = findViewById(R.id.channel_name_view);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.channel_menu);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
@@ -168,7 +168,7 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
 
         mAllChannelPresenter = new AllChannelPresenter(this, this);
 
-        mVideoViewPresenter = new VideoViewPresenter(this, this, (IjkVideoView)findViewById(R.id.videoview));
+        mVideoViewPresenter = new VideoViewPresenter(this, this, (IjkVideoView) findViewById(R.id.videoview));
 
         mEDGPresenter = new EDGPresenter(this, this);
 
@@ -187,6 +187,7 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
             @Override
             public void onBind(View view, int i) {
                 mVideoViewPresenter.playVideo(mTvSources.get(i).getTvDataSource());
+                mCurrentPlaySource = mTvSources.get(i);
             }
         });
     }
@@ -223,8 +224,9 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
         mChannelItemAdapter.setData(data);
         mChannelItemAdapter.notifyDataSetChanged();
 
-        mVideoViewPresenter.playVideo(data.get(15).getTvDataSource());
+        mVideoViewPresenter.playVideo(data.get(0).getTvDataSource());
         mVideoView.setVisibility(View.VISIBLE);
+        mCurrentPlaySource = data.get(0);
     }
 
     @Override
@@ -236,24 +238,46 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
     }
 
     @Override
+    public void updateShowInfo() {
+        mEDGPresenter.updateShowInfo(mCurrentPlaySource);
+    }
+
+    @Override
+    public void updateShowInfoUI(List<ShowPlayTimes> timesList) {
+        TextView curPlay = (TextView) findViewById(R.id.show_playing);
+        TextView curPlayNext = (TextView) findViewById(R.id.show_will_playing);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.show_progress);
+
+        if (timesList != null && timesList.size() > 0) {
+            ShowPlayTimes timePlaying = timesList.get(0);
+            ShowPlayTimes timeNext = timesList.get(1);
+            curPlay.setText(timePlaying.getShowStartTime() + "  " + getString(R.string.show_playing_tilte) + " "
+                    + timePlaying.getShowName());
+            curPlayNext.setText(timeNext.getShowStartTime() + "  " + getString(R.string.show_will_play_title) + " "
+                    + timeNext.getShowName());
+        }
+
+    }
+
+    @Override
     public boolean onTouch(View v, MotionEvent event) {
 
         mVideoView.setFocusable(false);
 
-        if(v.getId() == R.id.videoview) {
+        if (v.getId() == R.id.videoview) {
             showShowInfoView();
             findViewById(R.id.channel_menu).requestFocus();
         }
 
-        if(v.getId() == R.id.channel_name_view ) {
-            if(!showProgrameInfoView) {
+        if (v.getId() == R.id.channel_name_view) {
+            if (!showProgrameInfoView) {
                 showProgrameInfoView = true;
 
                 delayedHideShowInfoView(AUTO_HIDE_DELAY_MILLIS);
             }
         }
 
-        if( v.getId() == R.id.show_playing_info_view) {
+        if (v.getId() == R.id.show_playing_info_view) {
 
         }
         return false;
@@ -353,21 +377,4 @@ public class MainActivity extends FullActivity implements IMainView , View.OnTou
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    @RxLogSubscriber
-    class TvSouceSubcriber extends Subscriber<List<TvSource>> {
-        @Override
-        public void onCompleted() {
-
-        }
-
-        @Override
-        public void onError(Throwable e) {
-
-        }
-
-        @Override
-        public void onNext(List<TvSource> tvSources) {
-
-        }
-    }
 }

@@ -48,16 +48,19 @@ public class SqlShowTimeTableManager  {
     }
 
     public void addShowTimeTable(List<ShowPlayTimes> timesList) {
+        Logger.getLogger().d("addShowTimeTable");
         try {
             db.beginTransaction();
             for(ShowPlayTimes playTimes : timesList) {
                 ContentValues values = new ContentValues();
+                values.put(ShowTimesTableColumn.CHANNEL_INDEX, playTimes.getIndex());
                 values.put(ShowTimesTableColumn.CHANNEL_NAME, playTimes.getChanelName());
                 values.put(ShowTimesTableColumn.SHOWS_NAME, playTimes.getShowName());
                 values.put(ShowTimesTableColumn.SHOWS_PIC_URL, playTimes.getPic());
                 values.put(ShowTimesTableColumn.SHOWS_START_TIME, playTimes.getShowStartTime());
                 values.put(ShowTimesTableColumn.SHOWS_END_TIME, playTimes.getShowEndTime());
                 values.put(ShowTimesTableColumn.SHOWS_CONTENT, playTimes.getShowContent());
+                values.put(ShowTimesTableColumn.SHOWS_PLAYING, playTimes.isPlaying() == true ? 1 : 0);
 
                 long rowId = db.insert(ShowTimesTableColumn.SHOWTIMES_TABLE_NAME, null, values);
                 if(rowId != -1) {
@@ -80,12 +83,14 @@ public class SqlShowTimeTableManager  {
             db.beginTransaction();
 
             ContentValues values = new ContentValues();
+            values.put(ShowTimesTableColumn.CHANNEL_INDEX, times.getIndex());
             values.put(ShowTimesTableColumn.CHANNEL_NAME, times.getChanelName());
             values.put(ShowTimesTableColumn.SHOWS_NAME, times.getShowName());
             values.put(ShowTimesTableColumn.SHOWS_PIC_URL, times.getPic());
             values.put(ShowTimesTableColumn.SHOWS_START_TIME, times.getShowStartTime());
             values.put(ShowTimesTableColumn.SHOWS_END_TIME, times.getShowEndTime());
             values.put(ShowTimesTableColumn.SHOWS_CONTENT, times.getShowContent());
+            values.put(ShowTimesTableColumn.SHOWS_PLAYING, times.isPlaying() == true ? 1 : 0);
 
             long rowId = db.insert(ShowTimesTableColumn.SHOWTIMES_TABLE_NAME, null, values);
             if(rowId != -1) {
@@ -107,18 +112,29 @@ public class SqlShowTimeTableManager  {
         List<ShowPlayTimes> qShowPlayTimes = new ArrayList<>();
         Cursor cursor = db.query(ShowTimesTableColumn.SHOWTIMES_TABLE_NAME, columns, selection, selectionArgs,
                 groupBy, having, orderBy);
-        while(cursor.moveToNext()) {
-            ShowPlayTimes times = new ShowPlayTimes();
-            times.setChanelName(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.CHANNEL_NAME)));
-            times.setShowName(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_NAME)));
-            times.setPic(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_PIC_URL)));
-            times.setShowStartTime(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_START_TIME)));
-            times.setShowEndTime(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_END_TIME)));
-            times.setShowContent(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_CONTENT)));
-        }
-        cursor.close();
 
-        return qShowPlayTimes;
+        if(cursor.moveToFirst()) {
+            while(cursor.moveToNext()) {
+                ShowPlayTimes times = new ShowPlayTimes();
+                times.setIndex(cursor.getInt(cursor.getColumnIndex(ShowTimesTableColumn.CHANNEL_INDEX)));
+                times.setChanelName(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.CHANNEL_NAME)));
+                times.setShowName(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_NAME)));
+                times.setPic(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_PIC_URL)));
+                times.setShowStartTime(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_START_TIME)));
+                times.setShowEndTime(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_END_TIME)));
+                times.setShowContent(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_CONTENT)));
+                Logger.getLogger().i("count = " + cursor.getInt(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_PLAYING)));
+                times.setPlaying(cursor.getInt(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_PLAYING)) == 1);
+
+                qShowPlayTimes.add(times);
+            }
+
+            cursor.close();
+
+            return qShowPlayTimes;
+        }
+
+        return null;
     }
 
     public int delShowPlayTimes(String selection, String[] selectionArgs) {
@@ -131,10 +147,17 @@ public class SqlShowTimeTableManager  {
     /***********************************************/
 
     public void insertShowTableUpdateTime(String channelName) {
+        Logger.getLogger().d("insertShowTableUpdateTime");
         try {
             db.beginTransaction();
             ContentValues values = new ContentValues();
             values.put(ShowsPlayTableUpdateColumn.SHOWS_CHANNEL_NAME, channelName);
+            Date date = new Date();
+
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            String dateStr = format.format(date);
+            Logger.getLogger().i("date + " + dateStr + " dateStr " + dateStr);
+            values.put(ShowsPlayTableUpdateColumn.SHOWS_UPDATE_TIME, dateStr);
             long rowId = db.insert(ShowsPlayTableUpdateColumn.SHOWS_PLAY_TABLE_UPDATE_TABLE_NAME, null, values);
             if(rowId != -1) {
 
@@ -148,18 +171,32 @@ public class SqlShowTimeTableManager  {
         }
     }
 
-    public Date queryShowTableUpdateTime(final String channelName) {
-        String sql = "SELECT datetime(timestamp,'localtime') FROM " + ShowsPlayTableUpdateColumn.SHOWS_PLAY_TABLE_UPDATE_TABLE_NAME;
+    public String queryShowTableUpdateTime(final String channelName) {
+
+        String sql = "SELECT * FROM " + ShowsPlayTableUpdateColumn.SHOWS_PLAY_TABLE_UPDATE_TABLE_NAME
+                + " WHERE " + ShowsPlayTableUpdateColumn.SHOWS_CHANNEL_NAME + "=?";
+//        String sql = "SELECT datetime(show_update_time,'localtime') FROM " + ShowsPlayTableUpdateColumn.SHOWS_PLAY_TABLE_UPDATE_TABLE_NAME
+//                + " WHERE " + ShowsPlayTableUpdateColumn.SHOWS_CHANNEL_NAME + "=" + channelName;
         Cursor cursor = db.rawQuery(sql, new String[] {channelName});
-        String dateStr = cursor.getString(cursor.getColumnIndex("datetime(timestamp,'localtime')"));
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date date = null;
-        try {
-            date = format.parse(dateStr);
-        } catch (Exception e) {
-            e.printStackTrace();
+        Logger.getLogger().e("count : " +cursor.getCount());
+        if(cursor.moveToFirst()) {
+            Logger.getLogger().i(cursor.getString(cursor.getColumnIndex(ShowsPlayTableUpdateColumn.SHOWS_CHANNEL_NAME)));
+//            String dateStr = cursor.getString(cursor.getColumnIndex("datetime(show_update_time,'localtime')"));
+            String dateStr = cursor.getString(cursor.getColumnIndex(ShowsPlayTableUpdateColumn.SHOWS_UPDATE_TIME));
+            Logger.getLogger().i("dateStr " + dateStr);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = null;
+            try {
+                date = format.parse(dateStr);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Logger.getLogger().i("channelNmaeddd " + channelName);
+            return dateStr;
         }
-        return date;
+
+        Logger.getLogger().i("channelNmaefffff " + channelName);
+        return null;
     }
 
 

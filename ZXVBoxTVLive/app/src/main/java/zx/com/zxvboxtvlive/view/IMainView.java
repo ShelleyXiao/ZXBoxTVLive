@@ -2,6 +2,7 @@ package zx.com.zxvboxtvlive.view;
 
 import java.util.List;
 
+import zx.com.zxvboxtvlive.mode.ShowPlayTimes;
 import zx.com.zxvboxtvlive.mode.TvSource;
 
 /**
@@ -26,5 +27,8 @@ public interface IMainView {
 
     void checkNextSource();
 
+    void updateShowInfo();
+
+    void updateShowInfoUI(List<ShowPlayTimes> timesList);
 
 }

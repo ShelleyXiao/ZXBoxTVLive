@@ -24,6 +24,7 @@ public class App extends Application {
 
         currentSourceId = 0;
 
+        SqlShowTimeTableManager.initShowTimeTableManager(this);
     }
 
     public static App getInstance() {

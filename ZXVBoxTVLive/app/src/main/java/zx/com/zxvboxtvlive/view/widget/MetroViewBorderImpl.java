@@ -91,7 +91,7 @@ public class MetroViewBorderImpl<X extends View> implements ViewTreeObserver.OnG
     @Override
     public void onGlobalLayout() {
         mMetroViewBorder.onLayout(mView, mViewGroup);
-        Logger.getLogger().i(" onGlobalLayout**************" );
+//        Logger.getLogger().i(" onGlobalLayout**************" );
     }
 
     @Override
