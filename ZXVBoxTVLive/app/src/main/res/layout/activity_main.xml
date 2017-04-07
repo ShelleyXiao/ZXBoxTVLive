@@ -155,7 +155,7 @@
             android:layout_marginTop="@dimen/px20"
             android:layout_marginRight="@dimen/px50"
             android:layout_toRightOf="@+id/channel_id"
-            android:text="@string/show_playing_tilte"
+            android:text="@string/hava_no_show_info"
             android:textColor="#fff"
             android:textSize="18sp"
             />
@@ -183,7 +183,7 @@
             android:layout_below="@+id/show_progress"
             android:layout_marginTop="@dimen/px5"
             android:layout_toRightOf="@+id/channel_id"
-            android:text="@string/show_will_play_title"
+            android:text="@string/hava_no_show_info"
             android:textColor="#fff"
             android:textSize="18sp"
             />

@@ -67,7 +67,7 @@ public class SqlShowTimeTableManager  {
 
                 }
 
-                Logger.getLogger().d("SqlShowTimeTableManager add id: " + rowId);
+//                Logger.getLogger().d("SqlShowTimeTableManager add id: " + rowId);
 
             }
             db.setTransactionSuccessful();
@@ -130,11 +130,31 @@ public class SqlShowTimeTableManager  {
             }
 
             cursor.close();
-
-            return qShowPlayTimes;
         }
 
-        return null;
+        return qShowPlayTimes;
+    }
+
+
+    public ShowPlayTimes queryPlayingShowInfo() {
+        Cursor cursor = db.query(ShowTimesTableColumn.SHOWTIMES_TABLE_NAME, null, ShowTimesTableColumn.SHOWS_PLAYING + "=?", new String[] {"1"},
+                null , null, null);
+        ShowPlayTimes times = new ShowPlayTimes();
+        if(cursor.moveToFirst()) {
+
+            times.setIndex(cursor.getInt(cursor.getColumnIndex(ShowTimesTableColumn.CHANNEL_INDEX)));
+            times.setChanelName(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.CHANNEL_NAME)));
+            times.setShowName(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_NAME)));
+            times.setPic(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_PIC_URL)));
+            times.setShowStartTime(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_START_TIME)));
+            times.setShowEndTime(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_END_TIME)));
+            times.setShowContent(cursor.getString(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_CONTENT)));
+            Logger.getLogger().i("count = " + cursor.getInt(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_PLAYING)));
+            times.setPlaying(cursor.getInt(cursor.getColumnIndex(ShowTimesTableColumn.SHOWS_PLAYING)) == 1);
+        }
+        cursor.close();
+
+        return times;
     }
 
     public int delShowPlayTimes(String selection, String[] selectionArgs) {
@@ -198,6 +218,7 @@ public class SqlShowTimeTableManager  {
         Logger.getLogger().i("channelNmaefffff " + channelName);
         return null;
     }
+
 
 
     public void delShowTableUpdateTime(final String channelName) {

@@ -5,8 +5,12 @@ import android.text.TextUtils;
 
 import com.fernandocejas.frodo.annotation.RxLogObservable;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import rx.Observable;
@@ -47,6 +51,9 @@ public class EDGPresenter extends Presenter {
 
     @RxLogObservable
     public void updateShowInfo(final TvSource source) {
+        if(source == null) {
+            return;
+        }
         final String nameLog = source.getPinyingLog();
         if (TextUtils.isEmpty(nameLog)) {
             return;
@@ -54,8 +61,21 @@ public class EDGPresenter extends Presenter {
 
         final String name = source.getTvName();
         final String time = SqlShowTimeTableManager.getInstance().queryShowTableUpdateTime(name);
-//        Logger.getLogger().i("date time " + time.toString());
-        if (time == null || !compareUpdateTime(time)) {
+//        ShowPlayTimes playingShow = SqlShowTimeTableManager.getInstance().queryPlayingShowInfo();
+//        Logger.getLogger().i("playingShow " + playingShow.toString());
+
+//        Logger.getLogger().e(" test 1 " + comparePlayTime("1:50", "2:40"));
+//        Logger.getLogger().e(" test 2 " + comparePlayTime("1:50", "3:40"));
+//        Logger.getLogger().e(" test 3 " + comparePlayTime("2:50", "13:40"));
+        String startTime = null;
+        String endTime = null;
+
+        if(mPlayingTimes.size() >= 1) {
+            mPlayingTimes.get(0).getShowStartTime();
+            endTime = mPlayingTimes.get(1).getShowStartTime();
+        }
+
+        if (time == null || startTime == null|| !comparePlayTime(startTime, endTime)) {
 
             Observable.create(new Observable.OnSubscribe<List<ShowPlayTimes>>() {
                 @Override
@@ -67,7 +87,7 @@ public class EDGPresenter extends Presenter {
                         times = JsoupUtils.getShowPlayTimeList(name, nameLog + Constants.BASE_EPG_WEISHI);
                     }
 
-                    Logger.getLogger().i("times: " + times.get(0).toString());
+//                    Logger.getLogger().i("times: " + times.get(0).toString());
                     subscriber.onNext(times);
                     subscriber.onCompleted();
                 }
@@ -86,14 +106,14 @@ public class EDGPresenter extends Presenter {
 
                         @Override
                         public void onError(Throwable e) {
-
+                            Logger.getLogger().e("EdgPresent Error Info:  " + e.getMessage());
                         }
 
                         @Override
                         public void onNext(List<ShowPlayTimes> timesList) {
-//                            for (ShowPlayTimes time : timesList) {
-//                                Logger.getLogger().e("next: " + time.toString());
-//                            }
+                            for (ShowPlayTimes time : timesList) {
+                                Logger.getLogger().e("next: " + time.toString());
+                            }
                             if (time == null) {
                                 SqlShowTimeTableManager.getInstance().addShowTimeTable(timesList);
                             } else {
@@ -101,6 +121,7 @@ public class EDGPresenter extends Presenter {
                                 Logger.getLogger().i("del item count = " + count);
                                 SqlShowTimeTableManager.getInstance().addShowTimeTable(timesList);
                             }
+
                             mMainView.updateShowInfoUI(getPlayingShows(timesList));
                         }
                     });
@@ -131,11 +152,42 @@ public class EDGPresenter extends Presenter {
         return month == currentMonth && day == currentDay;
     }
 
+    private boolean comparePlayTime(String startTime, String endTime) {
+        if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+            return false;
+        }
+
+//        String[] startTimeArr = startTime.split(":");
+//        String[] endTimeArr = endTime.split(":");
+//
+//        int nowHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+//        int nowMinute = Calendar.getInstance().get(Calendar.MINUTE);
+//        if(nowHour > endTimeArr[1] || nowHour < startTimeArr[0]) {
+//            return false;
+//        }
+
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String date = df.format(new Date());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+        try {
+            long startTimeVal = sdf.parse(date + " " + startTime).getTime();
+            long endTimeVal = sdf.parse(date + " " + endTime).getTime();
+            long currentTime = sdf.parse(sdf.format(new Date())).getTime();
+            Logger.getLogger().e("startTimeVal " + startTimeVal + " " + endTimeVal + " " + currentTime);
+            return startTimeVal <= currentTime && currentTime <= endTimeVal;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
     private List<ShowPlayTimes> getPlayingShows(List<ShowPlayTimes> timesList) {
         List<ShowPlayTimes> playTimes = new ArrayList<>();
         int curHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         int curMinute = Calendar.getInstance().get(Calendar.MINUTE);
         int index = -1;
+//        Logger.getLogger().i("size = " + timesList.size());
         for (int i = 0; i < timesList.size(); i++) {
 
             if (timesList.get(i).isPlaying() == true) {
@@ -148,11 +200,12 @@ public class EDGPresenter extends Presenter {
         if (index < timesList.size() - 1) {
             ShowPlayTimes time = new ShowPlayTimes(timesList.get(++index));
             playTimes.add(time);
+
         }
         for (ShowPlayTimes times : playTimes) {
-            if(times.getShowStartTime() == null) {
+            if (times.getShowStartTime() == null && mPlayingTimes.size() >= 1) {
                 ShowPlayTimes time = mPlayingTimes.get(1);
-                if(null != time) {
+                if (null != time) {
                     times.setShowStartTime(time.getShowStartTime());
                 }
             }

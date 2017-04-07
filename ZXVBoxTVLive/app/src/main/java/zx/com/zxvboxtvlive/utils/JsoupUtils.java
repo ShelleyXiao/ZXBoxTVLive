@@ -122,12 +122,12 @@ public class JsoupUtils {
                 String showTime = element.attr("data-mainstars");
                 String[] timeArr = showTime.split("-");
                 showPlayTime.setPlaying(false);
-                Logger.getLogger().i("timeArr: " + timeArr.length);
+//                Logger.getLogger().i("timeArr: " + timeArr.length);
                 if (timeArr.length > 1) {
                     showPlayTime.setShowStartTime(timeArr[0]);
                     showPlayTime.setShowEndTime(timeArr[1]);
                     Elements span = element.getElementsByTag("span");
-                    Logger.getLogger().i("playing   " + span.get(0).text());
+//                    Logger.getLogger().i("playing   " + span.get(0).text());
                     if (span.get(0).text().equals(App.getInstance().getString(R.string.get_edg_playing_show_title))) {
                         showPlayTime.setPlaying(true);
                     }

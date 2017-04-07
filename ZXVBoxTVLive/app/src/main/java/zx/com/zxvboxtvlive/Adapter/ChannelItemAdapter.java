@@ -91,7 +91,7 @@ public class ChannelItemAdapter extends RecyclerView.Adapter<ChannelItemAdapter.
             Logger.getLogger().d(TAG, "mDataset has no data!");
             return;
         }
-        Logger.getLogger().i(" i " + i + " name : " + mDataList.get(i).getTvName());
+//        Logger.getLogger().i(" i " + i + " name : " + mDataList.get(i).getTvName());
         viewHolder.mTextView.setText(mDataList.get(i).getTvName());
         viewHolder.itemView.setTag(i);
         viewHolder.itemView.setOnFocusChangeListener(mOnFocusChangeListener);

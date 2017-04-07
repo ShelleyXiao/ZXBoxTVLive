@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,10 +21,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import zx.com.zxvboxtvlive.Adapter.ChannelItemAdapter;
 import zx.com.zxvboxtvlive.R;
+import zx.com.zxvboxtvlive.Setting;
 import zx.com.zxvboxtvlive.ijkplayer.media.IjkVideoView;
 import zx.com.zxvboxtvlive.mode.ShowPlayTimes;
 import zx.com.zxvboxtvlive.mode.TvSource;
@@ -51,6 +54,8 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
     private TextView mShowPlayingName;
     private TextView mShowWillPlayName;
 
+    private RecyclerView mChannelList;
+
     private ProgressBar mShowProgress;
     private MetroViewBorderImpl mMetroViewBorder;
 
@@ -60,7 +65,7 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
 
     private ChannelItemAdapter mChannelItemAdapter;
     private List<TvSource> mTvSources = new ArrayList<>();
-    private TvSource mCurrentPlaySource;
+    private TvSource mCurrentPlaySource = null;
 
     private boolean showChannelView = true;
     private boolean showProgrameInfoView = true;
@@ -101,8 +106,8 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
 
         registerReceiver();
 
-//        mAllChannelPresenter.updateChannelData();
-        mAllChannelPresenter.updateChannelDataOther();
+        mAllChannelPresenter.updateChannelData();
+//        mAllChannelPresenter.updateChannelDataOther();
 
 
         new Thread(new Runnable() {
@@ -145,6 +150,8 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
     protected void onStop() {
         super.onStop();
 
+        Setting.lastPlayChannel(this, mCurrentPlaySource.getTvName());
+
         mVideoViewPresenter.stop();
     }
 
@@ -157,14 +164,14 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
         mVideoView = (IjkVideoView) findViewById(R.id.videoview);
         mChannelView = findViewById(R.id.channel_name_view);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.channel_menu);
+        mChannelList = (RecyclerView) findViewById(R.id.channel_menu);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setFocusable(false);
-        mMetroViewBorder.attachTo(recyclerView);
+        mChannelList.setLayoutManager(layoutManager);
+        mChannelList.setFocusable(false);
+        mMetroViewBorder.attachTo(mChannelList);
 
-        createOptionItemData(recyclerView, R.layout.detail_menu_item);
+        createOptionItemData(mChannelList, R.layout.detail_menu_item);
 
         mAllChannelPresenter = new AllChannelPresenter(this, this);
 
@@ -188,6 +195,8 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
             public void onBind(View view, int i) {
                 mVideoViewPresenter.playVideo(mTvSources.get(i).getTvDataSource());
                 mCurrentPlaySource = mTvSources.get(i);
+
+                showShowInfoView();
             }
         });
     }
@@ -224,9 +233,24 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
         mChannelItemAdapter.setData(data);
         mChannelItemAdapter.notifyDataSetChanged();
 
-        mVideoViewPresenter.playVideo(data.get(0).getTvDataSource());
+
         mVideoView.setVisibility(View.VISIBLE);
-        mCurrentPlaySource = data.get(0);
+        String channelName  = Setting.getLastPlayChannelName(this);
+        for(TvSource source : data) {
+            if(source.getTvName().equals(channelName)) {
+                mCurrentPlaySource = source;
+                break;
+            }
+        }
+        if(mCurrentPlaySource == null) {
+            mCurrentPlaySource = data.get(0);
+        }
+
+        mVideoViewPresenter.playVideo(mCurrentPlaySource.getTvDataSource());
+
+        int index = data.indexOf(mCurrentPlaySource);
+        mChannelList.scrollToPosition(index);
+        mChannelList.requestFocus();
     }
 
     @Override
@@ -247,16 +271,48 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
         TextView curPlay = (TextView) findViewById(R.id.show_playing);
         TextView curPlayNext = (TextView) findViewById(R.id.show_will_playing);
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.show_progress);
-
+        Logger.getLogger().i(" " + timesList.size());
         if (timesList != null && timesList.size() > 0) {
-            ShowPlayTimes timePlaying = timesList.get(0);
-            ShowPlayTimes timeNext = timesList.get(1);
-            curPlay.setText(timePlaying.getShowStartTime() + "  " + getString(R.string.show_playing_tilte) + " "
-                    + timePlaying.getShowName());
-            curPlayNext.setText(timeNext.getShowStartTime() + "  " + getString(R.string.show_will_play_title) + " "
-                    + timeNext.getShowName());
-        }
+            ShowPlayTimes showPlaying = timesList.get(0);
+            ShowPlayTimes showNext = timesList.get(1);
 
+            String showPlaingStartTime = showPlaying.getShowStartTime();
+            String showNextStartTime = showNext.getShowStartTime();
+
+            if (showPlaingStartTime != null) {
+                curPlay.setText(showPlaying.getShowStartTime() + "  " + getString(R.string.show_playing_tilte) + " "
+                        + showPlaying.getShowName());
+            } else {
+                curPlay.setText(getString(R.string.hava_no_show_info));
+            }
+
+            if (showNextStartTime != null) {
+                curPlayNext.setText(showNext.getShowStartTime() + "  " + getString(R.string.show_will_play_title) + " "
+                        + showNext.getShowName());
+            } else {
+                curPlayNext.setText(getString(R.string.hava_no_show_info));
+            }
+
+            double totalTime = processShowTimeLong(showPlaying.getShowStartTime(), showNext.getShowStartTime());
+
+            int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+            int minute = Calendar.getInstance().get(Calendar.MINUTE);
+
+            double nowPlay = processShowTimeLong(showPlaying.getShowStartTime(), hour + ":" + minute);
+            Logger.getLogger().e("totalTime  = " + totalTime + " nowPlay = " + nowPlay);
+            if (nowPlay <= 0 || nowPlay > totalTime) {
+                progressBar.setProgress(100);
+            } else {
+//                Logger.getLogger().e("value " + (int)(( (double) (nowPlay / totalTime) ) * 100));
+                progressBar.setProgress((int) (((double) (nowPlay / totalTime)) * 100));
+            }
+
+        } else {
+
+            curPlay.setText(getString(R.string.hava_no_show_info));
+            curPlayNext.setText(getString(R.string.hava_no_show_info));
+            progressBar.setProgress(100);
+        }
     }
 
     @Override
@@ -286,8 +342,9 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
     private void showShowInfoView() {
         showProgrameInfoView = true;
         mShowPlayInfoView.setVisibility(View.VISIBLE);
-
         delayedHideShowInfoView(AUTO_HIDE_DELAY_MILLIS);
+
+        mEDGPresenter.updateShowInfo(mCurrentPlaySource);
     }
 
     private void delayedHideShowInfoView(int delayMillis) {
@@ -377,4 +434,20 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
+    private int processShowTimeLong(String timeStart, String endTime) {
+        if (TextUtils.isEmpty(timeStart) || TextUtils.isEmpty(endTime)) {
+            return 0;
+        }
+
+        String[] startTimeArr = timeStart.split(":");
+        String[] endTimeArr = endTime.split(":");
+
+        if (startTimeArr[0].equals(endTimeArr[0])) {
+            return Integer.valueOf(endTimeArr[1]) - Integer.valueOf(startTimeArr[1]);
+        } else {
+            int hour = Integer.valueOf(endTimeArr[0]) - Integer.valueOf(startTimeArr[0]);
+            return (hour - 1) * 60 + (60 - Integer.valueOf(startTimeArr[1])) + Integer.valueOf(endTimeArr[1]);
+        }
+
+    }
 }
