@@ -34,4 +34,11 @@
     <color name="un_select_backgroud">#4682B4</color>
     <color name="select_backgroud">#00E5EE</color>
     <color name="settings_backgroud">#000033</color>
+
+    <color name="blue">#ff045fc5</color>
+
+    <color name="title_color">#CCd2d4eb</color>
+
+    <color name="item_selector">#Af87CEFA</color>
+
 </resources>

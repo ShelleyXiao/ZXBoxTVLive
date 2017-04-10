@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/px75"
+                android:layout_marginBottom="@dimen/px10"
+                android:layout_marginLeft="@dimen/px20"
+                android:layout_marginRight="@dimen/px20"
+                android:layout_marginTop="@dimen/px10"
+    >
+
+    <TextView
+        android:id="@+id/tv_channel_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/px75"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/px10"
+        android:layout_marginLeft="@dimen/px20"
+        android:layout_marginRight="@dimen/px20"
+        android:layout_marginTop="@dimen/px10"
+        android:background="@drawable/item_bg_focus"
+        android:focusable="true"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        />
+
+    <View
+        android:id="@+id/selected_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/select_backgroud"
+        android:visibility="invisible"/>
+
+</RelativeLayout>
+
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zx.com.zxvboxtvlive.view.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <TextView 
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textColor="@color/title_color"
+        android:textSize="@dimen/px24"
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/px10"
+        />
+
+</zx.com.zxvboxtvlive.view.autolayout.AutoLinearLayout>

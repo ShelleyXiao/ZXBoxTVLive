@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/px20">
+
+    <RelativeLayout
+        android:id="@+id/channel_tilte_container"
+        android:layout_width="@dimen/px500"
+        android:layout_height="@dimen/px120">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="@string/channel_title"
+            android:textColor="@color/titleTextColor"
+            android:textSize="28sp"
+            />
+
+        <View
+            android:id="@+id/div"
+            android:layout_width="@dimen/px5"
+            android:layout_height="@dimen/px80"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:alpha="0.4"
+            android:background="@color/blue"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/px120"
+        android:layout_toRightOf="@+id/channel_tilte_container"
+        >
+
+        <zx.com.zxvboxtvlive.view.widget.PageViewIndicator
+            android:id="@+id/indicator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/top_div"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/px1"
+        android:layout_below="@+id/channel_tilte_container"
+        android:layout_marginLeft="@dimen/px50"
+        android:layout_marginRight="@dimen/px50"
+        android:background="@drawable/add_common_line"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/channel_list"
+        android:layout_width="@dimen/px500"
+        android:layout_height="@dimen/px760"
+        android:layout_below="@+id/top_div"
+        android:layout_marginBottom="@dimen/px40"
+        android:layout_gravity="center"
+        android:clipToPadding="false"
+        android:padding="@dimen/px20"
+        android:paddingLeft="@dimen/px30"
+        android:paddingRight="@dimen/px30"
+        />
+
+    <View
+        android:id="@+id/list_right_div"
+        android:layout_width="@dimen/px5"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/top_div"
+        android:layout_toRightOf="@+id/channel_list"
+        android:paddingTop="@dimen/px30"
+        android:paddingBottom="@dimen/px30"
+        android:alpha="0.4"
+        android:background="@color/blue"/>
+
+    <View
+        android:id="@+id/list_bottom_div"
+        android:layout_width="@dimen/px400"
+        android:layout_height="@dimen/px1"
+        android:layout_below="@+id/channel_list"
+        android:layout_marginLeft="@dimen/px50"
+        android:layout_marginRight="@dimen/px50"
+        android:background="@drawable/add_common_line"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@+id/list_right_div"
+        android:layout_below="@+id/list_bottom_div"
+        android:layout_marginTop="@dimen/px25"
+        android:background="#000"
+        android:focusable="false"
+        android:focusableInTouchMode="false">
+
+        <zx.com.zxvboxtvlive.ijkplayer.media.IjkVideoView
+            android:id="@+id/videoview"
+            android:layout_width="@dimen/px480"
+            android:layout_height="@dimen/px320"
+            android:layout_centerInParent="true"
+            android:paddingRight="@dimen/px10"
+            android:focusable="false"
+            android:focusableInTouchMode="false">
+
+        </zx.com.zxvboxtvlive.ijkplayer.media.IjkVideoView>
+
+    </RelativeLayout>
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpaper"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/px800"
+        android:layout_toRightOf="@+id/list_right_div"
+        android:layout_below="@+id/top_div"
+        />
+
+    <View
+        android:id="@+id/bottom_div"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/px1"
+        android:layout_below="@+id/viewpaper"
+        android:layout_toRightOf="@+id/list_right_div"
+        android:paddingLeft="@dimen/px30"
+        android:paddingRight="@dimen/px30"
+        android:background="@drawable/add_common_line"
+        />
+
+
+</RelativeLayout>

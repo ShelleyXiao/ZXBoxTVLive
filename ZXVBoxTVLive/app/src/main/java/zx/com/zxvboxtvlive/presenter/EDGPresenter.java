@@ -26,6 +26,8 @@ import zx.com.zxvboxtvlive.utils.JsoupUtils;
 import zx.com.zxvboxtvlive.utils.Logger;
 import zx.com.zxvboxtvlive.view.IMainView;
 
+import static zx.com.zxvboxtvlive.Constants.BASE_EPG_YANSHI;
+
 /**
  * User: ShaudXiao
  * Date: 2017-04-05
@@ -82,7 +84,7 @@ public class EDGPresenter extends Presenter {
                 public void call(Subscriber<? super List<ShowPlayTimes>> subscriber) {
                     List<ShowPlayTimes> times;
                     if (nameLog.contains("cctv")) {
-                        times = JsoupUtils.getShowPlayTimeList(name, nameLog + Constants.BASE_EPG_YANSHI);
+                        times = JsoupUtils.getShowPlayTimeList(name, nameLog + BASE_EPG_YANSHI);
                     } else {
                         times = JsoupUtils.getShowPlayTimeList(name, nameLog + Constants.BASE_EPG_WEISHI);
                     }
@@ -136,6 +138,53 @@ public class EDGPresenter extends Presenter {
         }
 
 
+    }
+
+    public void getDayofShowTimeList(TvSource source, final String date) {
+        if(source == null) {
+            return;
+        }
+        final String nameLog = source.getPinyingLog();
+        if (TextUtils.isEmpty(nameLog)) {
+            return;
+        }
+        final String name = source.getTvName();
+
+
+        Observable.create(new Observable.OnSubscribe<List<ShowPlayTimes>>() {
+            @Override
+            public void call(Subscriber<? super List<ShowPlayTimes>> subscriber) {
+                List<ShowPlayTimes> times;
+                String url = "";
+                if (nameLog.contains("cctv")) {
+                    url = nameLog +"/" + date + Constants.BASE_EPG_YANSHI;
+                    times = JsoupUtils.getShowPlayTimeList(name, url);
+                } else {
+                    url = nameLog + Constants.BASE_EPG_WEISHI_PRE + date + Constants.BASE_EPG_WEISHI_EXT;
+                    times = JsoupUtils.getShowPlayTimeList(name, url);
+                }
+
+                subscriber.onNext(times);
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<ShowPlayTimes>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<ShowPlayTimes> timesList) {
+
+                    }
+                });
     }
 
     private boolean compareUpdateTime(String date) {

@@ -13,6 +13,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,6 +26,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import zx.com.zxvboxtvlive.Adapter.ChannelItemAdapter;
+import zx.com.zxvboxtvlive.Constants;
 import zx.com.zxvboxtvlive.R;
 import zx.com.zxvboxtvlive.Setting;
 import zx.com.zxvboxtvlive.ijkplayer.media.IjkVideoView;
@@ -64,7 +66,7 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
     private EDGPresenter mEDGPresenter;
 
     private ChannelItemAdapter mChannelItemAdapter;
-    private List<TvSource> mTvSources = new ArrayList<>();
+    private ArrayList<TvSource> mTvSources = new ArrayList<>();
     private TvSource mCurrentPlaySource = null;
 
     private boolean showChannelView = true;
@@ -153,6 +155,18 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
         Setting.lastPlayChannel(this, mCurrentPlaySource.getTvName());
 
         mVideoViewPresenter.stop();
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        Logger.getLogger().i("KeyCode = "  +keyCode);
+        if(keyCode == 60) {
+            Intent intent = new Intent();
+            intent.setClass(MainActivity.this, EPGActivity.class);
+            intent.putParcelableArrayListExtra(Constants.CHANNLE_LIST_KEY, mTvSources);
+            startActivity(intent);
+        }
+        return super.onKeyUp(keyCode, event);
     }
 
     private void initView() {

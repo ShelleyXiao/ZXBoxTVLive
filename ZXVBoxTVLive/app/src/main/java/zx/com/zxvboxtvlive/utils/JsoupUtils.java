@@ -47,11 +47,14 @@ public class JsoupUtils {
         List<TvSource> tvSources = new ArrayList<>();
         Elements elements = document.getElementsByClass("2u");
         Iterator iterator = elements.iterator();
+        int i = 0;
         while (iterator.hasNext()) {
             Element element = (Element) iterator.next();
 //            Logger.getLogger().i(element.toString());
             TvSource source = getTvSouceByElement(element);
+            source.setId(i);
             tvSources.add(source);
+            i++;
         }
         Logger.getLogger().i("*****************");
         return tvSources;
