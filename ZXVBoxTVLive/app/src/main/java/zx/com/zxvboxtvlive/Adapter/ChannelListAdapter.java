@@ -128,6 +128,17 @@ public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.
 
         });
 
+        viewHolder.itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    ViewCompat.animate(v).scaleX(1.17f).scaleY(1.17f).translationZ(1).start();
+                } else {
+                    ViewCompat.animate(v).scaleX(1.0f).scaleY(1.0f).translationZ(1).start();
+                }
+            }
+        });
+
         viewHolder.itemView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {

@@ -5,31 +5,32 @@
                 android:layout_height="@dimen/px75"
                 android:layout_gravity="center"
                 android:layout_margin="15dp"
-                android:focusable="true"
+                android:descendantFocusability="afterDescendants"
+                android:focusable="false"
                 android:gravity="center"
     >
 
     <TextView
         android:id="@+id/tv_menu_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
         android:layout_gravity="center"
         android:gravity="center"
         android:maxLines="1"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="24sp"/>
+        android:textSize="24sp"
+        android:background="@drawable/channle_tem_bg_focus"
+        android:focusable="true"/>
 
     <View
         android:id="@+id/selected_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/channel_item_selector"
-        android:visibility="invisible"/>
+        android:visibility="gone"
+        android:focusable="false"/>
 
 
 </RelativeLayout>
