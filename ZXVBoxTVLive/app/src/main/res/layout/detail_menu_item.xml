@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/px280"
-    android:layout_height="@dimen/px75"
-    android:layout_gravity="center"
-    android:layout_margin="15dp"
-    android:focusable="true"
-    android:gravity="center">
+                android:id="@+id/channel_list_item_root"
+                android:layout_width="@dimen/px280"
+                android:layout_height="@dimen/px75"
+                android:layout_gravity="center"
+                android:layout_margin="15dp"
+                android:focusable="true"
+                android:gravity="center"
+    >
 
     <TextView
         android:id="@+id/tv_menu_title"
@@ -16,12 +18,18 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:focusable="false"
         android:gravity="center"
+        android:maxLines="1"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="24sp"
-        android:maxLines="1"/>
+        android:textSize="24sp"/>
+
+    <View
+        android:id="@+id/selected_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/channel_item_selector"
+        android:visibility="invisible"/>
 
 
 </RelativeLayout>

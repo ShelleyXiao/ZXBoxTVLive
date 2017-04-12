@@ -133,13 +133,11 @@ public class PageViewIndicator extends LinearLayout implements
 	}
 
 	protected void scroll(int position, float offset) {
-		// TODO Auto-generated method stub
 		mTranslationX = getWidth() / count * (position + offset);
 		invalidate();
 	}
 
 	private void initView() {
-		// TODO Auto-generated method stub
 		for (int i = 0; i < adapter.getCount(); i++) {
 			final int j = i;
 			View view = getView(adapter.getView(i, null, this));
@@ -159,10 +157,12 @@ public class PageViewIndicator extends LinearLayout implements
 					}
 				}
 			});
-			
+
+            //用来循环选择
 			if(i == 0){
 				view.setId(0x1000101);
-				view.setNextFocusLeftId(0x1000111);
+//				view.setNextFocusLeftId(0x1000111);
+                view.setNextFocusLeftId(R.id.channel_list);
 			}else if(i == adapter.getCount() - 1){
 				view.setId(0x1000111);
 				view.setNextFocusRightId(0x1000101);
@@ -187,12 +187,19 @@ public class PageViewIndicator extends LinearLayout implements
 	protected void highLightTextView(int position) {
 		View view = ((ViewGroup) getChildAt(position)).getChildAt(0);
 		if (view instanceof TextView) {
-
-			((TextView) view).setTextColor(Color.rgb(150, 255, 0));
+            ((TextView) view).setBackgroundResource(R.drawable.title_boder);
+			((TextView) view).setTextColor(Color.rgb(255, 255, 255));
 			((TextView) view).setTextSize(getResources().getDimension(
 					R.dimen.dimen_36_sp));
 		}
 
+		View view2 = ((ViewGroup) getChildAt(position)).getChildAt(1);
+		if (view2 instanceof TextView) {
+			view2.setVisibility(View.VISIBLE);
+			((TextView) view2).setTextColor(Color.rgb(155, 255, 0));
+			((TextView) view2).setTextSize(getResources().getDimension(
+					R.dimen.dimen_36_sp));
+		}
 	}
 
 	private void resetTextViewColor() {
@@ -201,10 +208,15 @@ public class PageViewIndicator extends LinearLayout implements
 			if (group instanceof LinearLayout) {
 				View v = group.getChildAt(0);
 				if (v instanceof TextView) {
+                    ((TextView) v).setBackground(null);
 					((TextView) v).setTextColor(getResources().getColor(
 							R.color.white));
 					((TextView) v).setTextSize(getResources().getDimension(
 							R.dimen.dimen_36_sp));
+				}
+				View view2 = group.getChildAt(1);
+				if (view2 instanceof TextView) {
+					view2.setVisibility(View.INVISIBLE);
 				}
 			}
 

@@ -149,7 +149,7 @@ public class EDGPresenter extends Presenter {
             return;
         }
         final String name = source.getTvName();
-
+        Logger.getLogger().i("getDayofShowTimeList date : " + date);
 
         Observable.create(new Observable.OnSubscribe<List<ShowPlayTimes>>() {
             @Override
@@ -172,34 +172,21 @@ public class EDGPresenter extends Presenter {
                 .subscribe(new Subscriber<List<ShowPlayTimes>>() {
                     @Override
                     public void onCompleted() {
-
+                        mMainView.hideLoadingView();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        mMainView.showError(true);
                     }
 
                     @Override
                     public void onNext(List<ShowPlayTimes> timesList) {
-
+                        mMainView.updateShowInfoUI(timesList);
                     }
                 });
     }
 
-    private boolean compareUpdateTime(String date) {
-        if (date == null) {
-            return false;
-        }
-        String[] dateArr = date.split("-");
-        int month = Integer.valueOf(dateArr[1]);
-        int day = Integer.valueOf(dateArr[2]);
-        Logger.getLogger().i("date = " + date + " Month " + month + " day = " + day);
-        int currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
-        int currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        Logger.getLogger().i("currentMonth = " + currentMonth + " currentDay =  " + currentDay);
-        return month == currentMonth && day == currentDay;
-    }
 
     private boolean comparePlayTime(String startTime, String endTime) {
         if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {

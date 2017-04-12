@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:orientation="vertical"
+                android:padding="@dimen/px20"
+    >
+
+    <ImageView
+        android:id="@+id/shows_img"
+        android:layout_width="@dimen/px584"
+        android:layout_height="@dimen/px328"
+        android:contentDescription="@null"/>
+
+    <TextView
+        android:id="@+id/show_name_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/px40"
+        android:layout_marginTop="@dimen/px20"
+        android:layout_toRightOf="@+id/shows_img"
+        android:textColor="@color/zx_dcdcdc"
+        android:textSize="22sp"
+        android:text="@string/show_time_name_title"
+        />
+
+    <TextView
+        android:id="@+id/show_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/px40"
+        android:layout_marginTop="@dimen/px20"
+        android:layout_toRightOf="@+id/show_name_title"
+        android:textColor="@color/zx_color3"
+        android:textSize="22sp"
+        />
+
+    <TextView
+        android:id="@+id/show_starttime_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/show_name_title"
+        android:layout_marginLeft="@dimen/px40"
+        android:layout_marginTop="@dimen/px20"
+        android:layout_toRightOf="@+id/shows_img"
+        android:textColor="@color/zx_dcdcdc"
+        android:textSize="22sp"
+        android:text="@string/show_time_starttime_title"
+        />
+
+    <TextView
+        android:id="@+id/show_starttime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/show_name_title"
+        android:layout_marginLeft="@dimen/px40"
+        android:layout_marginTop="@dimen/px20"
+        android:layout_toRightOf="@+id/show_starttime_title"
+        android:textColor="@color/zx_color3"
+        android:textSize="22sp"
+        />
+
+
+    <TextView
+        android:id="@+id/show_content_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/shows_img"
+        android:layout_marginLeft="@dimen/px100"
+        android:layout_marginTop="@dimen/px20"
+        android:textColor="@color/zx_dcdcdc"
+        android:textSize="22sp"
+        android:text="@string/show_time_content_title"
+        />
+
+    <TextView
+        android:id="@+id/show_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/shows_img"
+        android:layout_marginTop="@dimen/px20"
+        android:layout_marginLeft="@dimen/px40"
+        android:layout_marginEnd="@dimen/px100"
+        android:layout_toEndOf="@+id/show_content_title"
+        android:textColor="@color/zx_color3"
+        android:textSize="22sp"
+        />
+
+
+</RelativeLayout>

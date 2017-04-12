@@ -142,7 +142,7 @@ public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.
 
         if(mDataList.get(i).getId() == channelId) {
             viewHolder.mSelectOverlay.setVisibility(View.VISIBLE);
-            viewHolder.mTextView.setTextColor(Color.RED);
+            viewHolder.mTextView.setTextColor(Color.BLACK);
         } else {
             viewHolder.mSelectOverlay.setVisibility(View.INVISIBLE);
             viewHolder.mTextView.setTextColor(Color.WHITE);
@@ -153,6 +153,14 @@ public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.
 
     public TvSource getSelectTvSrouce() {
         return mDataList.get(channelId);
+    }
+
+    public int getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(int channelId) {
+        this.channelId = channelId;
     }
 
     @Override

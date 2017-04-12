@@ -7,6 +7,7 @@
     android:background="@drawable/bg"
     android:clipChildren="false"
     android:clipToPadding="false"
+    android:focusable="false"
     tools:context="zx.com.zxvboxtvlive.activity.MainActivity">
 
     <zx.com.zxvboxtvlive.ijkplayer.media.IjkVideoView
@@ -88,8 +89,9 @@
         android:layout_marginTop="@dimen/px200"
         android:background="@drawable/channel_bg"
         android:orientation="vertical"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
+        android:focusable="false"
+        android:descendantFocusability="afterDescendants"
+        android:visibility="gone"
         >
 
         <TextView
@@ -108,7 +110,10 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:clipToPadding="false"
-            android:padding="@dimen/px20"/>
+            android:padding="@dimen/px20"
+            android:focusable="true"
+            android:descendantFocusability="afterDescendants"
+            />
 
     </LinearLayout>
 

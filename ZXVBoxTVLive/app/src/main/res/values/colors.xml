@@ -40,5 +40,8 @@
     <color name="title_color">#CCd2d4eb</color>
 
     <color name="item_selector">#Af87CEFA</color>
+    <color name="channel_item_selector">#3efefeff</color>
+
+    <color name="showtime_item_bg">#20FFFFFF</color>
 
 </resources>

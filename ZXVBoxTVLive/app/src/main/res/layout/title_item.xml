@@ -2,12 +2,24 @@
 <zx.com.zxvboxtvlive.view.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:descendantFocusability="afterDescendants">
+
     <TextView 
         android:id="@+id/title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:textColor="@color/title_color"
+        android:textSize="@dimen/px24"
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/px10"
+        />
+
+    <TextView
+        android:id="@+id/title_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorAccent"
         android:textSize="@dimen/px24"
         android:gravity="center"
         android:layout_marginBottom="@dimen/px10"

@@ -30,7 +30,7 @@
         android:id="@+id/selected_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/select_backgroud"
+        android:background="@color/channel_item_selector"
         android:visibility="invisible"/>
 
 </RelativeLayout>

@@ -16,6 +16,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -56,7 +57,7 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
     private TextView mShowPlayingName;
     private TextView mShowWillPlayName;
 
-    private RecyclerView mChannelList;
+    private RecyclerView mChannelListView;
 
     private ProgressBar mShowProgress;
     private MetroViewBorderImpl mMetroViewBorder;
@@ -72,6 +73,8 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
     private boolean showChannelView = true;
     private boolean showProgrameInfoView = true;
 
+    private boolean isFirstFoucus = false;
+
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
     private Handler mHideHandler = new Handler();
 
@@ -79,7 +82,10 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
         @Override
         public void run() {
             if (showChannelView) {
+                showChannelView = false;
+                mChannelView.setVisibility(View.GONE);
 
+                mMetroViewBorder.detach();
             } else {
 
             }
@@ -124,8 +130,8 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
                     }
                     View rootview = MainActivity.this.getWindow().getDecorView();
                     View aaa = rootview.findFocus();
-//                    if(aaa != null)
-//                    Logger.getLogger().d("" + aaa.toString());
+                    if (aaa != null)
+                        Logger.getLogger().d("" + aaa.toString());
                 }
 
             }
@@ -159,13 +165,45 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        Logger.getLogger().i("KeyCode = "  +keyCode);
-        if(keyCode == 60) {
+        Logger.getLogger().i("onKeyUp KeyCode = " + keyCode);
+        if (keyCode == 60) {
             Intent intent = new Intent();
             intent.setClass(MainActivity.this, EPGActivity.class);
             intent.putParcelableArrayListExtra(Constants.CHANNLE_LIST_KEY, mTvSources);
+            intent.putExtra(Constants.PLAYING_CHANNEL_KEY, mCurrentPlaySource);
+
             startActivity(intent);
         }
+
+        if (keyCode == 114) {
+            showChannelListView();
+        }
+
+        if (keyCode == 58) {
+            showShowInfoView();
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            int index = mTvSources.indexOf(mCurrentPlaySource);
+            if (index != 0) {
+                index--;
+                mCurrentPlaySource = mTvSources.get(index);
+            } else {
+                mCurrentPlaySource = mTvSources.get(mTvSources.size() - 1);
+            }
+            mVideoViewPresenter.playVideo(mCurrentPlaySource.getTvDataSource());
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            int index = mTvSources.indexOf(mCurrentPlaySource);
+            if (index >= mTvSources.size() - 1) {
+                mCurrentPlaySource = mTvSources.get(0);
+            } else {
+                index++;
+                mCurrentPlaySource = mTvSources.get(index);
+            }
+
+            mVideoViewPresenter.playVideo(mCurrentPlaySource.getTvDataSource());
+        }
+
         return super.onKeyUp(keyCode, event);
     }
 
@@ -178,14 +216,14 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
         mVideoView = (IjkVideoView) findViewById(R.id.videoview);
         mChannelView = findViewById(R.id.channel_name_view);
 
-        mChannelList = (RecyclerView) findViewById(R.id.channel_menu);
+        mChannelListView = (RecyclerView) findViewById(R.id.channel_menu);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mChannelList.setLayoutManager(layoutManager);
-        mChannelList.setFocusable(false);
-        mMetroViewBorder.attachTo(mChannelList);
+        mChannelListView.setLayoutManager(layoutManager);
+        mChannelListView.setFocusable(false);
+//        mMetroViewBorder.attachTo(mChannelListView);
 
-        createOptionItemData(mChannelList, R.layout.detail_menu_item);
+        createOptionItemData(mChannelListView, R.layout.detail_menu_item);
 
         mAllChannelPresenter = new AllChannelPresenter(this, this);
 
@@ -197,12 +235,53 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
         findViewById(R.id.show_playing_info_view).setOnTouchListener(this);
         findViewById(R.id.videoview).setOnTouchListener(this);
         findViewById(R.id.videoview).setFocusable(false);
+
+        mChannelView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    Logger.getLogger().e("mChannelView.setOnFocusChangeListener ");
+                }
+            }
+        });
+
+        mChannelListView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                Logger.getLogger().e("keycode = " + keyCode);
+                if (keyCode != -1) {
+                    showChannelListView();
+                }
+                return false;
+            }
+        });
+
+        mChannelView.getViewTreeObserver().addOnGlobalFocusChangeListener(new ViewTreeObserver.OnGlobalFocusChangeListener() {
+            @Override
+            public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+                Logger.getLogger().e("oldFocus = " + oldFocus + "**** newFocus =  " + newFocus);
+                if (null != newFocus && newFocus.getId() == R.id.channel_name_view) {
+                    mChannelListView.setFocusable(true);
+                    mChannelListView.requestFocus();
+                }
+            }
+        });
+
+        mChannelListView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && !isFirstFoucus) {
+                    isFirstFoucus = true;
+                    mChannelListView.getLayoutManager().smoothScrollToPosition(mChannelListView, null, mCurrentPlaySource.getId());
+                }
+            }
+        });
     }
 
     private void createOptionItemData(RecyclerView recyclerView, int id) {
         mChannelItemAdapter = new ChannelItemAdapter(this, id);
         recyclerView.setAdapter(mChannelItemAdapter);
-        recyclerView.scrollToPosition(0);
+//        recyclerView.scrollToPosition(0);
 
         mChannelItemAdapter.setOnBindListener(new ChannelItemAdapter.OnBindListener() {
             @Override
@@ -211,6 +290,12 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
                 mCurrentPlaySource = mTvSources.get(i);
 
                 showShowInfoView();
+            }
+
+            @Override
+            public void onKeyListener(int keyCode, KeyEvent event) {
+
+                showChannelListView();
             }
         });
     }
@@ -249,22 +334,26 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
 
 
         mVideoView.setVisibility(View.VISIBLE);
-        String channelName  = Setting.getLastPlayChannelName(this);
-        for(TvSource source : data) {
-            if(source.getTvName().equals(channelName)) {
+        String channelName = Setting.getLastPlayChannelName(this);
+        for (TvSource source : data) {
+            if (source.getTvName().equals(channelName)) {
                 mCurrentPlaySource = source;
                 break;
             }
         }
-        if(mCurrentPlaySource == null) {
+        if (mCurrentPlaySource == null) {
             mCurrentPlaySource = data.get(0);
         }
 
         mVideoViewPresenter.playVideo(mCurrentPlaySource.getTvDataSource());
 
+        showChannelListView();
+
         int index = data.indexOf(mCurrentPlaySource);
-        mChannelList.scrollToPosition(index);
-        mChannelList.requestFocus();
+        mChannelListView.scrollToPosition(index);
+        mChannelListView.requestFocus();
+
+
     }
 
     @Override
@@ -353,6 +442,15 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
         return false;
     }
 
+    private void showChannelListView() {
+        showChannelView = true;
+        mChannelListView.getLayoutManager().smoothScrollToPosition(mChannelListView, null, mTvSources.indexOf(mCurrentPlaySource));
+        mChannelView.setVisibility(View.VISIBLE);
+        delayedHideChannelListView(AUTO_HIDE_DELAY_MILLIS);
+        mMetroViewBorder.attachTo(mChannelListView);
+
+    }
+
     private void showShowInfoView() {
         showProgrameInfoView = true;
         mShowPlayInfoView.setVisibility(View.VISIBLE);
@@ -364,6 +462,11 @@ public class MainActivity extends FullActivity implements IMainView, View.OnTouc
     private void delayedHideShowInfoView(int delayMillis) {
         mHideHandler.removeCallbacks(mHideShowInfoViewRunnable);
         mHideHandler.postDelayed(mHideShowInfoViewRunnable, delayMillis);
+    }
+
+    private void delayedHideChannelListView(int delayMillis) {
+        mHideHandler.removeCallbacks(mHideChannelViewRunnable);
+        mHideHandler.postDelayed(mHideChannelViewRunnable, delayMillis);
     }
 
 

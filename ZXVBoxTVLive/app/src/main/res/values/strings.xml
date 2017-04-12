@@ -15,4 +15,11 @@
     <string name="get_edg_playing_show_title">正在播出</string>
     <string name="hava_no_show_info">暂无节目单,请稍后再试</string>
 
+    <string name="show_time_name_title">节目名:</string>
+    <string name="show_time_starttime_title">播出时间:</string>
+    <string name="show_time_content_title">内容简介:</string>
+
+
+
+
 </resources>

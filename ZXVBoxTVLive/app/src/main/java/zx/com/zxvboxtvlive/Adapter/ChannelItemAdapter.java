@@ -18,7 +18,9 @@
 package zx.com.zxvboxtvlive.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +44,12 @@ public class ChannelItemAdapter extends RecyclerView.Adapter<ChannelItemAdapter.
 
     private List<TvSource> mDataList = new ArrayList<>();
 
+    private int channelId = -1;
+
     public interface OnBindListener {
         void onBind(View view, int i);
+
+        void onKeyListener(int keyCode, KeyEvent event);
     }
 
     public ChannelItemAdapter(Context context) {
@@ -91,9 +97,18 @@ public class ChannelItemAdapter extends RecyclerView.Adapter<ChannelItemAdapter.
             Logger.getLogger().d(TAG, "mDataset has no data!");
             return;
         }
+        viewHolder.itemView.setTag(i);
 //        Logger.getLogger().i(" i " + i + " name : " + mDataList.get(i).getTvName());
         viewHolder.mTextView.setText(mDataList.get(i).getTvName());
-        viewHolder.itemView.setTag(i);
+
+        if(mDataList.get(i).getId() == channelId) {
+            viewHolder.mSelectOverlay.setVisibility(View.VISIBLE);
+            viewHolder.mTextView.setTextColor(Color.BLACK);
+        } else {
+            viewHolder.mSelectOverlay.setVisibility(View.INVISIBLE);
+            viewHolder.mTextView.setTextColor(Color.WHITE);
+        }
+
         viewHolder.itemView.setOnFocusChangeListener(mOnFocusChangeListener);
         final View view = viewHolder.itemView;
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -102,8 +117,26 @@ public class ChannelItemAdapter extends RecyclerView.Adapter<ChannelItemAdapter.
                 if (onBindListener != null) {
                     onBindListener.onBind(view, i);
                 }
+                TvSource source = mDataList.get(i);
+                if(source.getId() != channelId) {
+                    channelId = source.getId();
+                }
+                notifyDataSetChanged();
             }
         });
+
+        viewHolder.itemView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                Logger.getLogger().e("holder itemview keyCode =  " + keyCode );
+                if(onBindListener != null) {
+                    onBindListener.onKeyListener(keyCode, event);
+                }
+                return false;
+            }
+        });
+
+
 
     }
 
@@ -115,10 +148,12 @@ public class ChannelItemAdapter extends RecyclerView.Adapter<ChannelItemAdapter.
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView mTextView;
+        public View mSelectOverlay;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mTextView = (TextView) itemView.findViewById(R.id.tv_menu_title);
+            mSelectOverlay = itemView.findViewById(R.id.selected_overlay);
         }
     }
 

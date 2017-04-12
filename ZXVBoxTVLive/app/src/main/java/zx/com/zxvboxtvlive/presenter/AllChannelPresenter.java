@@ -98,9 +98,9 @@ public class AllChannelPresenter extends Presenter {
 
                     @Override
                     public void onNext(List<TvSource> tvSources) {
-                        for(TvSource source : tvSources) {
-                            Logger.getLogger().i(source.toString());
-                        }
+//                        for(TvSource source : tvSources) {
+//                            Logger.getLogger().i(source.toString());
+//                        }
                         mAllChannelView.updateChannleAdapter(tvSources);
                     }
                 });

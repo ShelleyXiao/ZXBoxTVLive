@@ -107,6 +107,7 @@ public class JsoupUtils {
     }
 
     public static List<ShowPlayTimes> getShowPlayTimeList(final String channelName, final String url) {
+        Logger.getLogger().d("url = " + url);
         List<ShowPlayTimes> showPlayTimesList = new ArrayList<>();
         try {
             Document document = getHtmlDocument(Constants.BASE_EPG_URL, url);

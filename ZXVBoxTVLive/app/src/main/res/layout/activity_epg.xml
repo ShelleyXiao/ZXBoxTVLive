@@ -9,7 +9,9 @@
     <RelativeLayout
         android:id="@+id/channel_tilte_container"
         android:layout_width="@dimen/px500"
-        android:layout_height="@dimen/px120">
+        android:layout_height="@dimen/px120"
+        android:focusable="false"
+        android:focusableInTouchMode="false">
 
         <TextView
             android:layout_width="wrap_content"
@@ -36,14 +38,17 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/px120"
+        android:layout_height="@dimen/px220"
         android:layout_toRightOf="@+id/channel_tilte_container"
+        android:layout_marginLeft="@dimen/px20"
         >
 
         <zx.com.zxvboxtvlive.view.widget.PageViewIndicator
             android:id="@+id/indicator"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:nextFocusDown="@+id/showtimes_viewpaper"
+            android:nextFocusLeft="@+id/channel_list"/>
 
     </RelativeLayout>
 
@@ -68,6 +73,8 @@
         android:padding="@dimen/px20"
         android:paddingLeft="@dimen/px30"
         android:paddingRight="@dimen/px30"
+        android:nextFocusRight="@+id/indicator"
+        android:descendantFocusability="afterDescendants"
         />
 
     <View
@@ -99,7 +106,9 @@
         android:layout_marginTop="@dimen/px25"
         android:background="#000"
         android:focusable="false"
-        android:focusableInTouchMode="false">
+        android:focusableInTouchMode="false"
+        android:nextFocusRight="@+id/indicator"
+        >
 
         <zx.com.zxvboxtvlive.ijkplayer.media.IjkVideoView
             android:id="@+id/videoview"
@@ -114,24 +123,74 @@
 
     </RelativeLayout>
 
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewpaper"
+    <FrameLayout
+        android:id="@+id/show_times_container"
         android:layout_width="match_parent"
         android:layout_height="@dimen/px800"
         android:layout_toRightOf="@+id/list_right_div"
         android:layout_below="@+id/top_div"
-        />
+        >
+
+        <LinearLayout
+            android:id="@+id/load_showtime_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:focusable="false">
+
+            <ImageView
+                android:id="@+id/error_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/pagefailed_bg"
+                />
+
+
+            <TextView
+                android:id="@+id/error_promate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/error_img"
+                android:layout_marginTop="@dimen/px5"
+                android:text="@string/hava_no_show_info"
+                android:textColor="#fff"
+                android:textSize="18sp"
+                />
+
+
+        </LinearLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/showtimes_viewpaper"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/px800"
+            android:nextFocusLeft="@+id/channel_list"
+            android:descendantFocusability="afterDescendants"
+            />
+
+    </FrameLayout>
+
+
 
     <View
         android:id="@+id/bottom_div"
         android:layout_width="match_parent"
         android:layout_height="@dimen/px1"
-        android:layout_below="@+id/viewpaper"
+        android:layout_below="@+id/show_times_container"
         android:layout_toRightOf="@+id/list_right_div"
         android:paddingLeft="@dimen/px30"
         android:paddingRight="@dimen/px30"
         android:background="@drawable/add_common_line"
+        />
+
+    <include layout="@layout/showtime_productor_layout"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_toRightOf="@+id/list_right_div"
+             android:layout_below="@+id/bottom_div"
         />
 
 
